@@ -36,11 +36,12 @@ Modal.prototype.open = function(options){
     _this.__opened = true;
     _this.opening = null;
     _this.__afterOpenCallback && _this.__afterOpenCallback();
+    console.log(1);
   });
 }
 
 Modal.prototype.close = function(options){
-
+  console.log(2);
   if (this.closing || this.opening) return Promise.reject();
   if (!this.__opened) return Promise.reject();
 	this.closing = true;
@@ -100,7 +101,7 @@ Modal.prototype.__setBg = function() {
   var _this = this;
   setTimeout(function(){
     _this.__bg.style.opacity = _this.BGopacity;
-  },0);
+  },25);
   this.__bg.addEventListener('click',function(e){
     _this.close.call(_this)
     .then(function(){
@@ -130,24 +131,35 @@ Modal.prototype.__showElement = function(){
     _this.__el.style.transition =  _this.transition;
     _this.__el.style.transform = 'translate(0,0) scale(1)';
     _this.__el.style.opacity =  '1';
-  },0);
+  },25);
   return new Promise(function(resolve,reject){
-    _this.__el.addEventListener('transitionend',function(){
-      resolve();
-    });
 
+    let a = function(e){
+        console.log(e,1)
+        _this.__el.style.transition = '';
+        _this.__el.removeEventListener('transitionend',a);
+        resolve();
+    };
+    _this.__el.addEventListener('transitionend',a,false);
   });
 };
 Modal.prototype.__hideElement = function(){
-
-  this.__el.style.transform = this.transform;
-  this.__el.style.opacity =  '0';
-  this.__el.style.transition = this.closeTransition || this.transition;
-
-
   var _this = this;
+
+  if (this.closeTransition)
+    this.__el.style.transition = this.closeTransition;
+
+    this.__el.style.transform = this.transform;
+    this.__el.style.opacity = '0';
+
+
+
+
   return new Promise(function(resolve,reject){
 		function hide(e){
+      let transitionTime = (_this.closeTransition || _this.transition).match(/d+/)
+      if (e.elapsedTime == .3) return;
+
       resolve();
 
       _this.__el.style.transition =  '';
@@ -165,7 +177,7 @@ Modal.prototype.__hideElement = function(){
       _this.__el.removeEventListener('transitionend', hide);
 
     }
-    _this.__el.addEventListener('transitionend',hide);
+    _this.__el.addEventListener('transitionend',hide,false);
 
   });
 };
@@ -193,46 +205,3 @@ Modal.prototype.__parseOptions = function(options){
     this.__afterCloseCallback = options.afterClose;
 
 }
-
-var modal = new Modal({
-//  element:document.querySelector('#qqq'),
-  open: function(){
-    document.body.style.background = "red";
-  },
-  close: function(){
-    document.body.style.background = "yellow";
-  },
-  BGclose: function(){
-    //document.body.style.background = "orange";
-  },
-  afterOpen: function(){
-  	console.log(123);
-  },
-  afterClose: function(){
-		console.log(13555);
-  }
-});
-modal.element('#qqq');
-
-qwe.addEventListener('click',function(){
-  modal.open().then(function(){
-		document.body.style.background = "purple";
-  });
-
-  //setTimeout(function(){
-  modal.close().then(function(){
-  	document.body.style.background = "brown";
-  });
-  //},2000)
-});
-zzzzz.onclick = function(){
-	modal.toggle().then(function(){
-  	alert("чекнуто li")
-  })
-};
-
-var mod = new Modal(document.getElementById('aaaaa'));
-
-document.body.onclick = function(){
-	mod.toggle();
-};

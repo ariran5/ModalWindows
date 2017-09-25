@@ -47,5 +47,51 @@
 
   </style>
   <script type="text/javascript" src="index.js"></script>
+  <script type="text/javascript">
+
+    var modal = new Modal({
+      open: function(){
+        console.log('open');
+      },
+      close: function(){
+        console.log('close');
+      },
+      BGclose: function(){
+        console.log('BGclose');
+      },
+      afterOpen: function(){
+        console.log('afterOpen');
+      },
+      afterClose: function(){
+        console.log('afterClose');
+      }
+    });
+    modal.element('#qqq');
+
+    qwe.addEventListener('click',function(){
+      modal.open().then(function(){
+        // document.body.style.background = "purple";
+
+        modal.close().then(function(){
+          // document.body.style.background = "brown";
+        });
+      });
+
+      //setTimeout(function(){
+
+      //},2000)
+    });
+    zzzzz.onclick = function(){
+      modal.toggle().then(function(){
+        alert("чекнуто li")
+      })
+    };
+
+    var mod = new Modal(document.getElementById('aaaaa'));
+
+    // document.body.onclick = function(){
+    //   mod.toggle();
+    // };
+  </script>
 </body>
 </html>
