@@ -36,12 +36,10 @@ Modal.prototype.open = function(options){
     _this.__opened = true;
     _this.opening = null;
     _this.__afterOpenCallback && _this.__afterOpenCallback();
-    console.log(1);
   });
 }
 
 Modal.prototype.close = function(options){
-  console.log(2);
   if (this.closing || this.opening) return Promise.reject();
   if (!this.__opened) return Promise.reject();
 	this.closing = true;

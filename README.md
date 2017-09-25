@@ -103,12 +103,15 @@ let options = {
 }
 const modal = new Modal(options);
 
-options.open = null;
-options.close = function(){...};
+let newOptions = {
+  open: null,
+  close: function(){...}
+}
 
-modal.open(options);
+modal.open(newOptions);
 ```
-Что-бы очистить нужно заменить свойство на null.
+Важно то, что новые опции не перетрут старые, а дополнят или заменят.
+Что-бы очистить нужно использовать свойство null.
 
 `Перед открытием попапа применятся новые опции.`
 ***
