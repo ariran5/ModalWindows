@@ -89,19 +89,22 @@ if (a !== 0) {
 ```
 let options = {
   element: document.querySelector('#qqq'),
-  open: function(){},
-  close: function(){},
-  BGclose: function(){},
-  afterOpen: function(){},
-  afterClose: function(){}
+  open: function(){...},
+  close: function(){...},
+  BGclose: function(){...},
+  afterOpen: function(){...},
+  afterClose: function(){...}
 }
 const modal = new Modal(options);
+
 options.open = null;
+options.close = function(){...};
 
 modal.open(options);
 ```
-То нужный коллбэк нужно заменить именно на null.
-Перед открытием попапа применятся новые опции.
+Что-бы отчистить нужно заменить свойство на null.
+
+**Перед открытием попапа применятся новые опции.**
 ***
 Важно
 ===============
