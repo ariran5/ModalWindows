@@ -176,11 +176,21 @@ Modal.prototype.__parseOptions = function(options){
     return;
   };
   options.element && this.element(options.element);
-  this.__openCallback = options.open || null;
-  this.__closeCallback = options.close || null;
-  this.__BGcloseCallback = options.BGclose || null;
-  this.__afterOpenCallback = options.afterOpen || null;
-  this.__afterCloseCallback = options.afterClose || null;
+
+  if ( options.open !== undefined )
+    this.__openCallback = options.open;
+
+  if ( options.close !== undefined )
+    this.__closeCallback = options.close;
+
+  if ( options.BGclose !== undefined )
+    this.__BGcloseCallback = options.BGclose;
+
+  if ( options.afterOpen !== undefined )
+    this.__afterOpenCallback = options.afterOpen;
+
+  if ( options.afterClose !== undefined )
+    this.__afterCloseCallback = options.afterClose;
 
 }
 
