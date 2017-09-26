@@ -9,11 +9,9 @@ function Modal(options){
   if (!window.ModalCount__QasRfmwORkdasRs)
    window.ModalCount__QasRfmwORkdasRs = 0;
 
-  if (!window.AfmJdnJREQjos__modalResized)
-    // this.__resize();
-
   if (!window.AfmJdnJREQjos__modalStyles)
     this.__styles();
+  if (this.hash) this.__hashListener();
 }
 
 Modal.prototype.open = function(options){
@@ -32,7 +30,7 @@ Modal.prototype.open = function(options){
   return this.__showElement()
 
   .then(function(){
-    // _this.__el.style.height = parseInt(getComputedStyle( _this.__el ).height) + 'px';
+    if (_this.hash) location.hash = _this.hash;
     _this.__opened = true;
     _this.opening = null;
     _this.__afterOpenCallback && _this.__afterOpenCallback();
@@ -53,6 +51,10 @@ Modal.prototype.close = function(options){
   return this.__hideElement()
 
   .then(function(){
+    if (_this.hash && _this.hash == location.hash){
+      history.replaceState({},document.title ,location.pathname.replace(/#/,''));
+      window.dispatchEvent(new Event('hashchange'));
+    }
     _this.__opened = false;
     _this.closing = null;
     _this.__afterCloseCallback && _this.__afterCloseCallback();
@@ -85,6 +87,7 @@ Modal.prototype.element = function(element) {
   } else if (element instanceof Object) {
     this.__el = element;
   }
+  if (!element) throw (new Error("Не задан элемент ~ element:'.asd' || element:document.querySelector('.asd') ~ " , this.__el));
 
 }
 Modal.prototype.__setBg = function() {
@@ -98,7 +101,6 @@ Modal.prototype.__setBg = function() {
   },25);
 
   this.__bg.addEventListener('click',function(e){
-    console.log(1);
     _this.close.call(_this)
     .then(function(){
       _this.__BGcloseCallback && _this.__BGcloseCallback();
@@ -120,7 +122,7 @@ Modal.prototype.__showElement = function(){
   },25);
   return new Promise(function(resolve,reject){
 
-    let a = function(e){
+    var a = function(e){
         _this.__el.style.transition = '';
         _this.__el.removeEventListener('transitionend',a);
         resolve();
@@ -154,6 +156,7 @@ Modal.prototype.__hideElement = function(){
 };
 
 Modal.prototype.__parseOptions = function(options){
+
   if (options.tagName || typeof options == 'string') {
     this.element(options);
     return;
@@ -175,16 +178,35 @@ Modal.prototype.__parseOptions = function(options){
   if ( options.afterClose !== undefined )
     this.__afterCloseCallback = options.afterClose;
 
+  if ( options.hash !== undefined ) {
+
+    this.hash = options.hash;
+    if (!this.__hashListenerBinded) {
+      this.__hashListenerBinded = this.__hashListener.bind(this);
+      window.addEventListener("hashchange", this.__hashListenerBinded)
+    }
+  }
+
 }
 
+Modal.prototype.__hashListener = function(options){
 
+  if (this.hash == location.hash && !this.__opened) {
+    this.open();
+  } else if (this.hash != location.hash && this.__opened) {
+    this.close();
+  }
+}
+
+// Не используется
 Modal.prototype.__resize = function(){
+  if(window.AfmJdnJREQjos__modalResized) return;
   window.AfmJdnJREQjos__modalResized = true;
-  let elements = document.getElementsByClassName('modal');
+  var elements = document.getElementsByClassName('modal');
 
   window.addEventListener('resize',  ()=>{
     for (var i = 0; i < elements.length; i++) {
-      let content = elements[i].querySelector('.modal__content-container');
+      var content = elements[i].querySelector('.modal__content-container');
       elements[i].style.height = content && content.scrollHeight + 57 + 'px';
     }
   });

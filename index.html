@@ -70,9 +70,50 @@
   </ul>
 
 
-  <ul id="aaaaa" class="modal">dh
-    <li><h3>Попапчанский</h3></li>
-    <li>Элемент LI с помощью которого можно закрыть</li>
+  <ul id="zzz" class="modal" >
+    <li class="modal__footer">
+      <div>Назад</div>
+      <div>Вперед</div>
+    </li>
+    <li class="modal__content-container">
+
+        <ul>
+          <li>Лоряяяяяя ипся</li>
+          <li>Лоряяяяяя ипся</li>
+          <li>Лоряяяяяя ипся</li>
+          <li>Лоряяяяяя ипся</li>
+          <li>Лоряяяяяя ипся</li>
+          <li>Лоряяяяяя ипся</li>
+          <li>Лоряяяяяя ипся</li>
+          <li>Лоряяяяяя ипся</li>
+          <li>Лоряяяяяя ипся</li>
+          <li>Лоряяяяяя ипся</li>
+          <li>Лоряяяяяя ипся</li>
+          <li>Лоряяяяяя ипся</li>
+          <li>Лоряяяяяя ипся</li>
+          <li>Лоряяяяяя ипся</li>
+          <li>Лоряяяяяя ипся</li>
+          <li>Лоряяяяяя ипся</li>
+          <li>Лоряяяяяя ипся</li>
+          <li>Лоряяяяяя ипся</li>
+          <li>Лоряяяяяя ипся</li>
+          <li>Лоряяяяяя ипся</li>
+          <li>Лоряяяяяя ипся</li>
+          <li>Лоря ипся</li>
+          <li>Лоря ипся</li>
+          <li>Лоря ипся</li>
+          <li>Лоря ипся</li>
+          <li>Лоря ипся</li>
+          <li>Лоря ипся</li>
+          <li>Лоря ипся</li>
+          <li>Лоря ипся</li>
+          <li>Лоря ипся</li>
+          <li>Лоря ипся</li>
+          <li>Лоря ипся</li>
+          <li>Лоря ипся</li>
+        </ul>
+
+    </li>
   </ul>
 
   <style media="screen">
@@ -92,109 +133,14 @@
       background:#fff;
     }
 
-    /*.modal--bg {
-      position: fixed;
-      will-change: opacity;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      background-color: rgba(255,255,255,.3);
-      opacity: 0;
-      transition: all .2s ease .1s;
-      -webkit-backdrop-filter: blur(20px);
-      backdrop-filter: blur(20px);
-    }
-    .modal--bg.modal--open {
-      opacity: 1;
-      top:0;
-      transition: all .3s ease .1s;
-    }
-    .modal {
-      color:#333;
-      position: fixed;
-      top: 5%;
-      left: 0%;
-      right: 0%;
-      will-change: transform, opacity;
-      display: none;
-      opacity: 0;
-      width: 55%;
-      min-height: 277px;
-      max-width: 1000px;
-      max-height: 90%;
-      padding: 0;
-      transform: translate(0 , 20px) scale(.9, 1);
-      margin: 0 auto;
-      transition: all .3s ease;
-      border-radius: 6px;
-      box-sizing: border-box ;
-      box-shadow: 0 10px 32px rgba(0, 0, 0, 0.15);
-      box-shadow: 0 16px 28px 0 rgba(0, 0, 0, 0.22), 0 25px 55px 0 rgba(0, 0, 0, 0.21);
-      overflow: hidden;
-    }
-    .modal__content-container {
-      min-height: 220px;
-      max-height:400px;
-      max-height: calc(90vh - 56px);
-      margin: 0;
-      margin-bottom: 56px;
-      overflow-y: auto;
-      padding: 10px 0;
-      box-sizing: border-box;
-
-    }
-    .modal__footer {
-      display: flex;
-      margin: 0 10px;
-      padding:0 6px;
-      height: 56px;
-      margin-top:-56px;
-      align-items: center;
-      justify-content: space-between;
-      border-top: 1px solid #e0e0e0;
-    }
-    .modal__footer div {
-      padding: 8px 16px;
-      background: rgb(227,6,17);
-      box-shadow: 0 4px 13px rgba(0, 0, 0, 0.45);
-      color: #fff;
-      border-radius: 3px;
-    }
-    @media (max-width:1000px) {
-      .modal {
-        width: 65%;
-        max-width: 1000px;
-      }
-    }
-    @media (max-width:800px) {
-      .modal {
-        width: 65%;
-        max-width: 1000px;
-      }
-    }
-    @media (max-width:600px) {
-      .modal {
-        width: 75%;
-        max-width: 1000px;
-      }
-    }
-    @media (max-width:480px) {
-      .modal {
-        width: 85%;
-        max-width: 1000px;
-      }
-    }
-    @media (max-width:320px) {
-      .modal {
-        width: 95%;
-      }
-    }*/
   </style>
   <script type="text/javascript" src="index.js"></script>
   <script type="text/javascript">
+  document.addEventListener('DOMContentLoaded', function(){
 
     var modal = new Modal({
+      element:'#qqq',
+      hash: '#qwe',
       open: function(){
         console.log('open');
       },
@@ -209,35 +155,19 @@
       },
       afterClose: function(){
         console.log('afterClose');
-      }
+        modal2.open({
+          hash:'#zzzz'
+        });
+      },
     });
-    modal.element('#qqq');
 
     qwe.addEventListener('click',function(){
-      modal.open().then(function(){
-        // document.body.style.background = "purple";
-
-
-      });
-
-      // setTimeout(function(){
-      //   modal.close().then(function(){
-      //     // document.body.style.background = "brown";
-      //   });
-      //
-      // },20000)
+      modal.open();
     });
-    zzzzz.onclick = function(){
-      modal.toggle().then(function(){
-        alert("чекнуто li")
-      })
-    };
+    var modal2 = new Modal(zzz);
+  });
 
-    var mod = new Modal(document.getElementById('aaaaa'));
 
-    // document.body.onclick = function(){
-    //   mod.toggle();
-    // };
   </script>
 </body>
 </html>
