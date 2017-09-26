@@ -5,16 +5,15 @@ function Modal(options){
   if (!options) return;
 
   this.__parseOptions(options);
-	this.transition = 'transform .3s ease, opacity .3s ease';
-  this.closeTransition = 'transform .2s ease, opacity .2s ease';
 
-
-  this.transform = 'translate(0, 40px) scale(.95,1)';
-  this.BGopacity = '.9';
-  this.BGcolor = 'rgb(255,255,255)';
-  if (!window.ModalCount__QasRfmwORkdasRs){
+  if (!window.ModalCount__QasRfmwORkdasRs)
    window.ModalCount__QasRfmwORkdasRs = 0;
-  }
+
+  if (!window.AfmJdnJREQjos__modalResized)
+    // this.__resize();
+
+  if (!window.AfmJdnJREQjos__modalStyles)
+    this.__styles();
 }
 
 Modal.prototype.open = function(options){
@@ -33,6 +32,7 @@ Modal.prototype.open = function(options){
   return this.__showElement()
 
   .then(function(){
+    // _this.__el.style.height = parseInt(getComputedStyle( _this.__el ).height) + 'px';
     _this.__opened = true;
     _this.opening = null;
     _this.__afterOpenCallback && _this.__afterOpenCallback();
@@ -45,7 +45,10 @@ Modal.prototype.close = function(options){
 	this.closing = true;
   options && this.__parseOptions(options);
   this.__closeCallback && this.__closeCallback();
-  this.__bg.remove();
+  this.__bg.classList.remove('modal--open');
+  this.__bg.addEventListener('transitionend',()=>{
+    _this.__bg.remove();
+  });
   var _this = this;
   return this.__hideElement()
 
@@ -86,21 +89,16 @@ Modal.prototype.element = function(element) {
 }
 Modal.prototype.__setBg = function() {
   this.__bg = document.createElement('div');
-  this.__bg.style.position = 'fixed';
-  this.__bg.style.willChange = 'opacity';
+  this.__bg.classList.add('modal--bg');
   this.__bg.style.zIndex = '99999' + window.ModalCount__QasRfmwORkdasRs++;
-  this.__bg.style.width = '100%';
-  this.__bg.style.height = '100%';
-  this.__bg.style.top = '0';
-  this.__bg.style.left = '0';
-  this.__bg.style.backgroundColor = this.BGcolor;
-  this.__bg.style.opacity = '0';
-  this.__bg.style.transition = this.transition;
+
   var _this = this;
   setTimeout(function(){
-    _this.__bg.style.opacity = _this.BGopacity;
+    _this.__bg.classList.add('modal--open');
   },25);
+
   this.__bg.addEventListener('click',function(e){
+    console.log(1);
     _this.close.call(_this)
     .then(function(){
       _this.__BGcloseCallback && _this.__BGcloseCallback();
@@ -110,30 +108,19 @@ Modal.prototype.__setBg = function() {
   document.body.insertAdjacentElement('beforeend',this.__bg);
 }
 Modal.prototype.__showElement = function(){
-
-  this.__el.style.position = 'fixed';
-  this.__el.style.zIndex = '999999' + window.ModalCount__QasRfmwORkdasRs++;
-  this.__el.style.width = '90%';
-  this.__el.style.willChange = 'opacity,transform';
-  this.__el.style.height = '90%';
-  this.__el.style.display = 'block';
-  this.__el.style.top = '5%';
-  this.__el.style.left = '5%';
-  this.__el.style.boxSizing =  'border-box' ;
-  this.__el.style.margin =  '0';
-  this.__el.style.opacity =  '0';
-  this.__el.style.transform = this.transform;
-
   var _this = this;
+
+  this.__el.style.zIndex = '999999' + window.ModalCount__QasRfmwORkdasRs++;
+  this.__el.style.display = 'flex';
+
+
   setTimeout(function(){
-    _this.__el.style.transition =  _this.transition;
     _this.__el.style.transform = 'translate(0,0) scale(1)';
     _this.__el.style.opacity =  '1';
   },25);
   return new Promise(function(resolve,reject){
 
     let a = function(e){
-        console.log(e,1)
         _this.__el.style.transition = '';
         _this.__el.removeEventListener('transitionend',a);
         resolve();
@@ -144,10 +131,8 @@ Modal.prototype.__showElement = function(){
 Modal.prototype.__hideElement = function(){
   var _this = this;
 
-  if (this.closeTransition)
-    this.__el.style.transition = this.closeTransition;
 
-    this.__el.style.transform = this.transform;
+    this.__el.style.transform = '';
     this.__el.style.opacity = '0';
 
 
@@ -155,24 +140,12 @@ Modal.prototype.__hideElement = function(){
 
   return new Promise(function(resolve,reject){
 		function hide(e){
-      let transitionTime = (_this.closeTransition || _this.transition).match(/d+/)
-      if (e.elapsedTime == .3) return;
 
       resolve();
-
-      _this.__el.style.transition =  '';
-      _this.__el.style.position = '';
-      _this.__el.style.zIndex = '';
-      _this.__el.style.width = '';
-      _this.__el.style.height = '';
-      _this.__el.style.top = '';
-      _this.__el.style.left = '';
-      _this.__el.style.boxSizing =  '' ;
-      _this.__el.style.margin =  '';
-      _this.__el.style.opacity =  '';
-      _this.__el.style.display = '';
-  		_this.__el.style.transform = '';
       _this.__el.removeEventListener('transitionend', hide);
+      _this.__el.style.display = '';
+      _this.__el.style.transform = '';
+      _this.__el.style.opacity =  '';
 
     }
     _this.__el.addEventListener('transitionend',hide,false);
@@ -203,3 +176,129 @@ Modal.prototype.__parseOptions = function(options){
     this.__afterCloseCallback = options.afterClose;
 
 }
+
+
+Modal.prototype.__resize = function(){
+  window.AfmJdnJREQjos__modalResized = true;
+  let elements = document.getElementsByClassName('modal');
+
+  window.addEventListener('resize',  ()=>{
+    for (var i = 0; i < elements.length; i++) {
+      let content = elements[i].querySelector('.modal__content-container');
+      elements[i].style.height = content && content.scrollHeight + 57 + 'px';
+    }
+  });
+};
+
+
+
+Modal.prototype.__styles = function(){
+  window.AfmJdnJREQjos__modalStyles = true;
+  var styles = document.createElement('style');
+  styles.innerHTML = `
+  .modal--bg {
+    position: fixed;
+    will-change: opacity;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: rgba(255,255,255,.3);
+    opacity: 0;
+    transition: all .2s ease .1s;
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+  }
+  .modal--bg.modal--open {
+    opacity: 1;
+    top:0;
+    transition: all .3s ease .1s;
+  }
+  .modal {
+    color:#333;
+    position: fixed;
+    top: 5%;
+    left: 0%;
+    right: 0%;
+    will-change: transform, opacity;
+    display: none;
+    opacity: 0;
+    width: 55%;
+    min-height: 277px;
+    max-width: 1000px;
+    max-height: 90%;
+    padding: 0;
+    transform: translate(0 , 20px) scale(.9, 1);
+    margin: 0 auto;
+    transition: all .3s ease;
+    border-radius: 6px;
+    box-sizing: border-box ;
+    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 16px 28px 0 rgba(0, 0, 0, 0.22), 0 25px 55px 0 rgba(0, 0, 0, 0.21);
+    overflow: hidden;
+    flex-direction:column;
+  }
+  .modal__content-container {
+    min-height: 220px;
+    max-height:400px;
+    max-height: 90vh;
+    margin: 0;
+    overflow-y: auto;
+    padding: 10px 0;
+    box-sizing: border-box;
+    order:1;
+  }
+  .modal__footer {
+    order:2;
+    display: flex;
+    margin: 0 10px;
+    padding:0 6px;
+    height: 56px;
+    margin-top:-56px;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid #e0e0e0;
+  }
+  .modal__footer ~ .modal__content-container {
+    max-height: calc(90vh - 56px);
+    margin-bottom: 56px;
+  }
+  .modal__footer div {
+    padding: 8px 16px;
+    background: rgb(227,6,17);
+    box-shadow: 0 4px 13px rgba(0, 0, 0, 0.45);
+    color: #fff;
+    border-radius: 3px;
+  }
+  @media (max-width:1000px) {
+    .modal {
+      width: 65%;
+      max-width: 1000px;
+    }
+  }
+  @media (max-width:800px) {
+    .modal {
+      width: 65%;
+      max-width: 1000px;
+    }
+  }
+  @media (max-width:600px) {
+    .modal {
+      width: 75%;
+      max-width: 1000px;
+    }
+  }
+  @media (max-width:480px) {
+    .modal {
+      width: 85%;
+      max-width: 1000px;
+    }
+  }
+  @media (max-width:320px) {
+    .modal {
+      width: 95%;
+    }
+  }
+  `;
+  document.body.append(styles);
+};
