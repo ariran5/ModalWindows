@@ -30,6 +30,15 @@ Modal.prototype.open = function(options){
   return this.__showElement()
 
   .then(function(){
+
+    _this.__buttonsListener = function(e){
+      if (e.target.closest('.modal__close')) {
+        this.close();
+      }
+    }.bind(_this);
+
+    _this.__el.addEventListener('click',_this.__buttonsListener);
+
     if (_this.hash) location.hash = _this.hash;
     _this.__opened = true;
     _this.opening = null;
@@ -51,6 +60,7 @@ Modal.prototype.close = function(options){
   return this.__hideElement()
 
   .then(function(){
+    _this.__el.removeEventListener('click',_this.__buttonsListener);
     if (_this.hash && _this.hash == location.hash){
       history.replaceState({},document.title ,location.pathname.replace(/#/,''));
       window.dispatchEvent(new Event('hashchange'));
@@ -206,7 +216,7 @@ Modal.prototype.__resize = function(){
 
   window.addEventListener('resize',  ()=>{
     for (var i = 0; i < elements.length; i++) {
-      var content = elements[i].querySelector('.modal__content-container');
+      var content = elements[i].querySelector('.modal__content');
       elements[i].style.height = content && content.scrollHeight + 57 + 'px';
     }
   });
@@ -249,6 +259,7 @@ Modal.prototype.__styles = function(){
     min-height: 277px;
     max-width: 1000px;
     max-height: 90%;
+    height:auto;
     padding: 0;
     transform: translate(0 , 20px) scale(.9, 1);
     margin: 0 auto;
@@ -260,13 +271,13 @@ Modal.prototype.__styles = function(){
     overflow: hidden;
     flex-direction:column;
   }
-  .modal__content-container {
+  .modal__content {
     min-height: 220px;
     max-height:400px;
     max-height: 90vh;
     margin: 0;
     overflow-y: auto;
-    padding: 10px 0;
+    padding: 10px;
     box-sizing: border-box;
     order:1;
   }
@@ -276,12 +287,13 @@ Modal.prototype.__styles = function(){
     margin: 0 10px;
     padding:0 6px;
     height: 56px;
+    min-height: 56px;
     margin-top:-56px;
     align-items: center;
     justify-content: space-between;
     border-top: 1px solid #e0e0e0;
   }
-  .modal__footer ~ .modal__content-container {
+  .modal__footer ~ .modal__content {
     max-height: calc(90vh - 56px);
     margin-bottom: 56px;
   }
