@@ -23,7 +23,7 @@ Modal.prototype.open = function(options){
   	throw (new Error("Не задан элемент ~ element:'.asd' || element:document.querySelector('.asd') ~ "));
    }
   document.body.style.width = document.documentElement.clientWidth + 'px';
-  document.body.overflow = 'hidden';
+  document.body.style.overflow = 'hidden';
   this.__openCallback && this.__openCallback();
   options && this.__parseOptions(options);
   this.__setBg();
@@ -63,7 +63,7 @@ Modal.prototype.close = function(options){
 
   .then(function(){
     document.body.style.width = '';
-    document.body.overflow = '';
+    document.body.style.overflow = '';
     _this.__el.removeEventListener('click',_this.__buttonsListener);
     if (_this.hash && _this.hash == location.hash){
       history.replaceState({},document.title ,location.pathname.replace(/#/,''));
@@ -407,9 +407,10 @@ Modal.prototype.__styles = function(){
     var elements = document.querySelectorAll('.modal__trigger');
 
     for (var i = 0; i < elements.length; i++) {
+      var href = elements[i].getAttribute('href');
       new Modal({
-        element:elements[i].getAttribute('href'),
-        hash:elements[i].getAttribute('href')
+        element: href,
+        hash: href
       });
     }
   });
