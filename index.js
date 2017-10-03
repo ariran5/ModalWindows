@@ -23,6 +23,11 @@ Modal.prototype.open = function (options) {
   }
   document.body.style.width = document.documentElement.clientWidth + 'px';
   document.body.style.overflow = 'hidden';
+  if (this.__modalStyle) {
+    for (var variable in this.__modalStyle) {
+      this.__el.style[variable] = this.__modalStyle[variable];
+    }
+  }
   this.__openCallback && this.__openCallback();
   options && this.__parseOptions(options);
   this.__setBg();
@@ -103,7 +108,7 @@ Modal.open = function (element, options) {
 
   requestAnimationFrame(function () {
     requestAnimationFrame(function () {
-      element.style.transform = 'translate(0,0) scale(1)';
+      element.style.transform = 'translate(0,-50%) scale(1)';
       element.style.opacity = '1';
     });
   });
@@ -151,6 +156,12 @@ Modal.prototype.__setBg = function () {
   this.__bg.classList.add('modal--bg');
   this.__bg.style.zIndex = '900' + window.ModalCount__QasRfmwORkdasRs++;
 
+  if (this.__bgStyle) {
+    for (var variable in this.__bgStyle) {
+      this.__el.style[variable] = this.__bgStyle[variable];
+    }
+  }
+
   var _this = this;
 
   requestAnimationFrame(function () {
@@ -175,7 +186,7 @@ Modal.prototype.__showElement = function () {
 
   requestAnimationFrame(function () {
     requestAnimationFrame(function () {
-      _this.__el.style.transform = 'translate(0,0) scale(1)';
+      _this.__el.style.transform = 'translate(0,-50%) scale(1)';
       _this.__el.style.opacity = '1';
     });
   });
@@ -234,6 +245,10 @@ Modal.prototype.__parseOptions = function (options) {
       window.addEventListener("hashchange", this.__hashListenerBinded);
     }
   }
+
+  if (options.modalStyle) this.__modalStyle = options.modalStyle;
+
+  if (options.bgStyle) this.__bgStyle = options.bgStyle;
 };
 
 Modal.prototype.__hashListener = function (options) {
@@ -245,24 +260,10 @@ Modal.prototype.__hashListener = function (options) {
   }
 };
 
-// Не используется
-Modal.prototype.__resize = function () {
-  if (window.AfmJdnJREQjos__modalResized) return;
-  window.AfmJdnJREQjos__modalResized = true;
-  var elements = document.getElementsByClassName('modal');
-
-  window.addEventListener('resize', function () {
-    for (var i = 0; i < elements.length; i++) {
-      var content = elements[i].querySelector('.modal__content');
-      elements[i].style.height = content && content.scrollHeight + 57 + 'px';
-    }
-  });
-};
-
 Modal.prototype.__styles = function () {
   window.AfmJdnJREQjos__modalStyles = true;
   var styles = document.createElement('style');
-  styles.innerHTML = '\n  .modal--bg {\n    position: fixed;\n    will-change: opacity;\n    width: 100%;\n    height: 100%;\n    top: 0;\n    left: 0;\n    background-color: rgba(255,255,255,.6);\n    opacity: 0;\n    transition: all .2s ease .1s;\n    -webkit-backdrop-filter: blur(20px);\n    backdrop-filter: blur(20px);\n  }\n  .modal--bg.modal--open {\n    opacity: 1;\n    top:0;\n    transition: all .3s ease .1s;\n  }\n  .modal {\n    color:#333;\n    position: fixed;\n    top: 5%;\n    left: 0%;\n    right: 0%;\n    will-change: transform, opacity;\n    display: none;\n    opacity: 0;\n    width: 55%;\n    min-height: 177px;\n    max-width: 1000px;\n    max-height: 90%;\n    height:auto;\n    padding: 0;\n    transform: translate(0 , 20px) scale(.9, 1);\n    margin: 0 auto;\n    transition: all .3s ease;\n    border-radius: 6px;\n    box-sizing: border-box ;\n    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.15);\n    box-shadow: 0 16px 28px 0 rgba(0, 0, 0, 0.22), 0 25px 55px 0 rgba(0, 0, 0, 0.21);\n    overflow: hidden;\n    flex-direction:column;\n  }\n  .modal__content {\n    min-height: 120px;\n    max-height:400px;\n    max-height: 90vh;\n    margin: 0;\n    overflow-y: auto;\n    padding: 30px;\n    box-sizing: border-box;\n    order:1;\n  }\n  .modal__footer {\n    order:2;\n    display: flex;\n    margin: 0 10px;\n    padding:0 6px;\n    height: 56px;\n    min-height: 56px;\n    margin-top:-56px;\n    align-items: center;\n    justify-content: space-between;\n    border-top: 1px solid #e0e0e0;\n  }\n  .modal__footer .btn {\n    font-size: .85rem;\n  }\n  .modal__footer ~ .modal__content {\n    max-height: calc(90vh - 56px);\n    margin-bottom: 56px;\n  }\n\n  @media (max-width:1000px) {\n    .modal {\n      width: 65%;\n      max-width: 1000px;\n    }\n  }\n  @media (max-width:800px) {\n    .modal {\n      width: 65%;\n      max-width: 1000px;\n    }\n  }\n  @media (max-width:600px) {\n    .modal {\n      width: 75%;\n      max-width: 1000px;\n    }\n  }\n  @media (max-width:480px) {\n    .modal {\n      width: 85%;\n      max-width: 1000px;\n    }\n  }\n  @media (max-width:320px) {\n    .modal {\n      width: 95%;\n    }\n  }\n  ';
+  styles.innerHTML = '\n  .modal--bg {\n    position: fixed;\n    will-change: opacity;\n    width: 100%;\n    height: 100%;\n    top: 0;\n    left: 0;\n    background-color: rgba(255,255,255,.6);\n    opacity: 0;\n    transition: all .2s ease .1s;\n    -webkit-backdrop-filter: blur(20px);\n    backdrop-filter: blur(20px);\n  }\n  .modal--bg.modal--open {\n    opacity: 1;\n    top:0;\n    transition: all .3s ease .1s;\n  }\n  .modal {\n    color:#333;\n    position: fixed;\n    top: 47%;\n    left: 0%;\n    right: 0%;\n    will-change: transform, opacity;\n    display: none;\n    opacity: 0;\n    width: 55%;\n    min-height: 177px;\n    max-width: 1000px;\n    max-height: 90%;\n    height:auto;\n    padding: 0;\n    transform: translate(0 , -45%) scale(.9, 1);\n    margin: 0 auto;\n    transition: all .3s ease;\n    border-radius: 6px;\n    box-sizing: border-box ;\n    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.15);\n    box-shadow: 0 16px 28px 0 rgba(0, 0, 0, 0.22), 0 25px 55px 0 rgba(0, 0, 0, 0.21);\n    overflow: hidden;\n    flex-direction:column;\n  }\n  .modal__content {\n    min-height: 120px;\n    max-height:400px;\n    max-height: 90vh;\n    margin: 0;\n    overflow-y: auto;\n    padding: 30px;\n    box-sizing: border-box;\n    order:1;\n  }\n  .modal__footer {\n    order:2;\n    display: flex;\n    margin: 0 10px;\n    padding:0 6px;\n    height: 56px;\n    min-height: 56px;\n    margin-top:-56px;\n    align-items: center;\n    justify-content: space-between;\n    border-top: 1px solid #e0e0e0;\n  }\n  .modal__footer .btn {\n    font-size: .85rem;\n  }\n  .modal__footer ~ .modal__content {\n    max-height: calc(90vh - 56px);\n    margin-bottom: 56px;\n  }\n\n  @media (max-width:1000px) {\n    .modal {\n      width: 65%;\n      max-width: 1000px;\n    }\n  }\n  @media (max-width:800px) {\n    .modal {\n      width: 65%;\n      max-width: 1000px;\n    }\n  }\n  @media (max-width:600px) {\n    .modal {\n      width: 75%;\n      max-width: 1000px;\n    }\n  }\n  @media (max-width:480px) {\n    .modal {\n      width: 85%;\n      max-width: 1000px;\n    }\n  }\n  @media (max-width:320px) {\n    .modal {\n      width: 95%;\n    }\n  }\n  ';
   document.body.append(styles);
 };
 

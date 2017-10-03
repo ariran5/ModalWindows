@@ -24,6 +24,11 @@ Modal.prototype.open = function(options){
    }
   document.body.style.width = document.documentElement.clientWidth + 'px';
   document.body.style.overflow = 'hidden';
+  if (this.__modalStyle) {
+    for (var variable in this.__modalStyle) {
+      this.__el.style[variable] = this.__modalStyle[variable];
+    }
+  }
   this.__openCallback && this.__openCallback();
   options && this.__parseOptions(options);
   this.__setBg();
@@ -110,7 +115,7 @@ Modal.open = function(element, options){
 
   requestAnimationFrame(function(){
     requestAnimationFrame(function(){
-      element.style.transform = 'translate(0,0) scale(1)';
+      element.style.transform = 'translate(0,-50%) scale(1)';
       element.style.opacity =  '1';
     });
   });
@@ -168,6 +173,12 @@ Modal.prototype.__setBg = function() {
   this.__bg.classList.add('modal--bg');
   this.__bg.style.zIndex = '900' + window.ModalCount__QasRfmwORkdasRs++;
 
+  if (this.__bgStyle) {
+    for (var variable in this.__bgStyle) {
+      this.__el.style[variable] = this.__bgStyle[variable];
+    }
+  }
+
   var _this = this;
 
   requestAnimationFrame(function(){
@@ -193,7 +204,7 @@ Modal.prototype.__showElement = function(){
 
   requestAnimationFrame(function(){
     requestAnimationFrame(function(){
-      _this.__el.style.transform = 'translate(0,0) scale(1)';
+      _this.__el.style.transform = 'translate(0,-50%) scale(1)';
       _this.__el.style.opacity =  '1';
     });
   });
@@ -264,6 +275,12 @@ Modal.prototype.__parseOptions = function(options){
     }
   }
 
+  if (options.modalStyle)
+    this.__modalStyle = options.modalStyle;
+
+  if (options.bgStyle)
+    this.__bgStyle = options.bgStyle;
+
 }
 
 Modal.prototype.__hashListener = function(options){
@@ -274,20 +291,6 @@ Modal.prototype.__hashListener = function(options){
     this.close();
   }
 }
-
-// Не используется
-Modal.prototype.__resize = function(){
-  if(window.AfmJdnJREQjos__modalResized) return;
-  window.AfmJdnJREQjos__modalResized = true;
-  var elements = document.getElementsByClassName('modal');
-
-  window.addEventListener('resize',  ()=>{
-    for (var i = 0; i < elements.length; i++) {
-      var content = elements[i].querySelector('.modal__content');
-      elements[i].style.height = content && content.scrollHeight + 57 + 'px';
-    }
-  });
-};
 
 
 
@@ -316,7 +319,7 @@ Modal.prototype.__styles = function(){
   .modal {
     color:#333;
     position: fixed;
-    top: 5%;
+    top: 47%;
     left: 0%;
     right: 0%;
     will-change: transform, opacity;
@@ -328,7 +331,7 @@ Modal.prototype.__styles = function(){
     max-height: 90%;
     height:auto;
     padding: 0;
-    transform: translate(0 , 20px) scale(.9, 1);
+    transform: translate(0 , -45%) scale(.9, 1);
     margin: 0 auto;
     transition: all .3s ease;
     border-radius: 6px;

@@ -145,12 +145,33 @@ myWindow.open().then(()=>{
 ---
 Что-бы применить стили для попапа нужно использовать такую разметку
 ```
-<ul class="modal" >
+<a href="#qwe" class="modal__trigger">Открыть попап</a>
+
+<ul id="qwe" class="modal" >
   <li class="modal__footer">
   </li>
-  <li class="modal__content-container">
+  <li class="modal__content">
+    <button class="modal__close">Закрыть</button>
   </li>
 </ul>
 ```
 Не обязаьельно использовать список с элементами списка, это могут быть простые дивы.
 В разметке нет ошибки, если нужен футер с кнопками, то он должен стоять `над контентом`
+
+6) Что-бы использовать свои стили нужно в опции добавить свойство modalStyle или bgStyle
+```
+options = {
+  ...
+  modalStyle: {
+    'max-height' : '90px',
+    'width': '1200px',
+    'top': '100px'
+  },
+  bgStyle: {
+    'height' : '20px',
+    'background' : 'red'
+  }
+  ...
+}
+```
+Важно помнить что свойство и значение должны быть строками 'max-width': '120px'
