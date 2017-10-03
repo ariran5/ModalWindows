@@ -294,7 +294,110 @@ Modal.prototype.__resize = function(){
 Modal.prototype.__styles = function(){
   window.AfmJdnJREQjos__modalStyles = true;
   var styles = document.createElement('style');
-  styles.innerHTML = "\n  .modal--bg {\n    position: fixed;\n    will-change: opacity;\n    width: 100%;\n    height: 100%;\n    top: 0;\n    left: 0;\n    background-color: rgba(255,255,255,.6);\n    opacity: 0;\n    transition: all .2s ease .1s;\n    -webkit-backdrop-filter: blur(20px);\n    backdrop-filter: blur(20px);\n  }\n  .modal--bg.modal--open {\n    opacity: 1;\n    top:0;\n    transition: all .3s ease .1s;\n  }\n  .modal {\n    color:#333;\n    position: fixed;\n    top: 5%;\n    left: 0%;\n    right: 0%;\n    will-change: transform, opacity;\n    display: none;\n    opacity: 0;\n    width: 55%;\n    min-height: 177px;\n    max-width: 1000px;\n    max-height: 90%;\n    height:auto;\n    padding: 0;\n    transform: translate(0 , 20px) scale(.9, 1);\n    margin: 0 auto;\n    transition: all .3s ease;\n    border-radius: 6px;\n    box-sizing: border-box ;\n    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.15);\n    box-shadow: 0 16px 28px 0 rgba(0, 0, 0, 0.22), 0 25px 55px 0 rgba(0, 0, 0, 0.21);\n    overflow: hidden;\n    flex-direction:column;\n  }\n  .modal__content {\n    min-height: 120px;\n    max-height:400px;\n    max-height: 90vh;\n    margin: 0;\n    overflow-y: auto;\n    padding: 30px;\n    box-sizing: border-box;\n    order:1;\n  }\n  .modal__footer {\n    order:2;\n    display: flex;\n    margin: 0 10px;\n    padding:0 6px;\n    height: 56px;\n    min-height: 56px;\n    margin-top:-56px;\n    align-items: center;\n    justify-content: space-between;\n    border-top: 1px solid #e0e0e0;\n  }\n  .modal__footer .btn {\n    font-size: .85rem;\n  }\n  .modal__footer ~ .modal__content {\n    max-height: calc(90vh - 56px);\n    margin-bottom: 56px;\n  }\n\n  @media (max-width:1000px) {\n    .modal {\n      width: 65%;\n      max-width: 1000px;\n    }\n  }\n  @media (max-width:800px) {\n    .modal {\n      width: 65%;\n      max-width: 1000px;\n    }\n  }\n  @media (max-width:600px) {\n    .modal {\n      width: 75%;\n      max-width: 1000px;\n    }\n  }\n  @media (max-width:480px) {\n    .modal {\n      width: 85%;\n      max-width: 1000px;\n    }\n  }\n  @media (max-width:320px) {\n    .modal {\n      width: 95%;\n    }\n  }\n  ";
+  styles.innerHTML = `
+  .modal--bg {
+    position: fixed;
+    will-change: opacity;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: rgba(255,255,255,.6);
+    opacity: 0;
+    transition: all .2s ease .1s;
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+  }
+  .modal--bg.modal--open {
+    opacity: 1;
+    top:0;
+    transition: all .3s ease .1s;
+  }
+  .modal {
+    color:#333;
+    position: fixed;
+    top: 5%;
+    left: 0%;
+    right: 0%;
+    will-change: transform, opacity;
+    display: none;
+    opacity: 0;
+    width: 55%;
+    min-height: 177px;
+    max-width: 1000px;
+    max-height: 90%;
+    height:auto;
+    padding: 0;
+    transform: translate(0 , 20px) scale(.9, 1);
+    margin: 0 auto;
+    transition: all .3s ease;
+    border-radius: 6px;
+    box-sizing: border-box ;
+    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 16px 28px 0 rgba(0, 0, 0, 0.22), 0 25px 55px 0 rgba(0, 0, 0, 0.21);
+    overflow: hidden;
+    flex-direction:column;
+  }
+  .modal__content {
+    min-height: 120px;
+    max-height:400px;
+    max-height: 90vh;
+    margin: 0;
+    overflow-y: auto;
+    padding: 30px;
+    box-sizing: border-box;
+    order:1;
+  }
+  .modal__footer {
+    order:2;
+    display: flex;
+    margin: 0 10px;
+    padding:0 6px;
+    height: 56px;
+    min-height: 56px;
+    margin-top:-56px;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid #e0e0e0;
+  }
+  .modal__footer .btn {
+    font-size: .85rem;
+  }
+  .modal__footer ~ .modal__content {
+    max-height: calc(90vh - 56px);
+    margin-bottom: 56px;
+  }
+
+  @media (max-width:1000px) {
+    .modal {
+      width: 65%;
+      max-width: 1000px;
+    }
+  }
+  @media (max-width:800px) {
+    .modal {
+      width: 65%;
+      max-width: 1000px;
+    }
+  }
+  @media (max-width:600px) {
+    .modal {
+      width: 75%;
+      max-width: 1000px;
+    }
+  }
+  @media (max-width:480px) {
+    .modal {
+      width: 85%;
+      max-width: 1000px;
+    }
+  }
+  @media (max-width:320px) {
+    .modal {
+      width: 95%;
+    }
+  }
+  `;
   document.body.append(styles);
 };
 
