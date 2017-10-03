@@ -1,5 +1,4 @@
 
-
 function Modal(options){
 
   if (!options) return;
@@ -23,6 +22,8 @@ Modal.prototype.open = function(options){
     this.opening = null;
   	throw (new Error("Не задан элемент ~ element:'.asd' || element:document.querySelector('.asd') ~ "));
    }
+  document.body.style.width = document.documentElement.clientWidth + 'px';
+  document.body.overflow = 'hidden';
   this.__openCallback && this.__openCallback();
   options && this.__parseOptions(options);
   this.__setBg();
@@ -34,6 +35,7 @@ Modal.prototype.open = function(options){
     _this.__buttonsListener = function(e){
       if (e.target.closest('.modal__close')) {
         this.close();
+        this.__el.removeEventListener('click',this.__buttonsListener);
       }
     }.bind(_this);
 
@@ -60,6 +62,8 @@ Modal.prototype.close = function(options){
   return this.__hideElement()
 
   .then(function(){
+    document.body.style.width = '';
+    document.body.overflow = '';
     _this.__el.removeEventListener('click',_this.__buttonsListener);
     if (_this.hash && _this.hash == location.hash){
       history.replaceState({},document.title ,location.pathname.replace(/#/,''));
@@ -75,12 +79,71 @@ Modal.prototype.toggle = function(options){
   options && this.__parseOptions(options);
   return (this.__opened ? this.close(): this.open() );
 }
-// Modal.open = function(element, options){
+Modal.open = function(element, options){
+  if (!window.ModalCount__QasRfmwORkdasRs)
+   window.ModalCount__QasRfmwORkdasRs = 0;
 
-// }
-// Modal.close = function(element, options){
+  //bg
+  let bg = document.createElement('div');
+  bg.classList.add('modal--bg');
+  bg.dataset.modalId = element.id;
+  bg.style.zIndex = '900' + window.ModalCount__QasRfmwORkdasRs++;
 
-// }
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      bg.classList.add('modal--open');
+    });
+  });
+  bg.addEventListener('click',function(e){
+
+    bg.classList.remove('modal--open');
+    bg.addEventListener('transitionend',()=>{
+      bg.remove();
+    });
+
+  },false);
+  document.body.insertAdjacentElement('beforeend',bg);
+
+  // el
+  element.style.zIndex = '999' + window.ModalCount__QasRfmwORkdasRs++;
+  element.style.display = 'flex';
+
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      element.style.transform = 'translate(0,0) scale(1)';
+      element.style.opacity =  '1';
+    });
+  });
+  new Promise(function(resolve,reject){
+
+    var a = function(e){
+        element.style.transition = '';
+        element.removeEventListener('transitionend',a);
+        resolve();
+    };
+    element.addEventListener('transitionend',a,false);
+  })
+  .then(function(){
+
+  });
+
+  [].forEach.call( element.querySelectorAll('.modal__close'), function(button){
+    button.addEventListener('click',function(){
+      bg.classList.remove('modal--open');
+      bg.addEventListener('transitionend',()=>{
+        bg.remove();
+      });
+    });
+  });
+}
+Modal.close = function(element, options){
+
+  let bg = document.querySelector('[data-modal-id="' + element.id + '"]');
+  bg.classList.remove('modal--open');
+
+
+
+}
 // Modal.toggle = function(element, options){
 
 // }
@@ -103,12 +166,15 @@ Modal.prototype.element = function(element) {
 Modal.prototype.__setBg = function() {
   this.__bg = document.createElement('div');
   this.__bg.classList.add('modal--bg');
-  this.__bg.style.zIndex = '99999' + window.ModalCount__QasRfmwORkdasRs++;
+  this.__bg.style.zIndex = '900' + window.ModalCount__QasRfmwORkdasRs++;
 
   var _this = this;
-  setTimeout(function(){
-    _this.__bg.classList.add('modal--open');
-  },25);
+
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      _this.__bg.classList.add('modal--open');
+    });
+  });
 
   this.__bg.addEventListener('click',function(e){
     _this.close.call(_this)
@@ -117,19 +183,20 @@ Modal.prototype.__setBg = function() {
     });
   },false);
 
-  document.body.insertAdjacentElement('beforeend',this.__bg);
+  this.__el.insertAdjacentElement('beforebegin',this.__bg);
 }
 Modal.prototype.__showElement = function(){
   var _this = this;
 
-  this.__el.style.zIndex = '999999' + window.ModalCount__QasRfmwORkdasRs++;
+  this.__el.style.zIndex = '999' + window.ModalCount__QasRfmwORkdasRs++;
   this.__el.style.display = 'flex';
 
-
-  setTimeout(function(){
-    _this.__el.style.transform = 'translate(0,0) scale(1)';
-    _this.__el.style.opacity =  '1';
-  },25);
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      _this.__el.style.transform = 'translate(0,0) scale(1)';
+      _this.__el.style.opacity =  '1';
+    });
+  });
   return new Promise(function(resolve,reject){
 
     var a = function(e){
@@ -235,7 +302,7 @@ Modal.prototype.__styles = function(){
     height: 100%;
     top: 0;
     left: 0;
-    background-color: rgba(255,255,255,.3);
+    background-color: rgba(255,255,255,.6);
     opacity: 0;
     transition: all .2s ease .1s;
     -webkit-backdrop-filter: blur(20px);
@@ -256,7 +323,7 @@ Modal.prototype.__styles = function(){
     display: none;
     opacity: 0;
     width: 55%;
-    min-height: 277px;
+    min-height: 177px;
     max-width: 1000px;
     max-height: 90%;
     height:auto;
@@ -272,12 +339,12 @@ Modal.prototype.__styles = function(){
     flex-direction:column;
   }
   .modal__content {
-    min-height: 220px;
+    min-height: 120px;
     max-height:400px;
     max-height: 90vh;
     margin: 0;
     overflow-y: auto;
-    padding: 10px;
+    padding: 30px;
     box-sizing: border-box;
     order:1;
   }
@@ -293,17 +360,14 @@ Modal.prototype.__styles = function(){
     justify-content: space-between;
     border-top: 1px solid #e0e0e0;
   }
+  .modal__footer .btn {
+    font-size: .85rem;
+  }
   .modal__footer ~ .modal__content {
     max-height: calc(90vh - 56px);
     margin-bottom: 56px;
   }
-  .modal__footer div {
-    padding: 8px 16px;
-    background: rgb(227,6,17);
-    box-shadow: 0 4px 13px rgba(0, 0, 0, 0.45);
-    color: #fff;
-    border-radius: 3px;
-  }
+
   @media (max-width:1000px) {
     .modal {
       width: 65%;
@@ -336,3 +400,17 @@ Modal.prototype.__styles = function(){
   `;
   document.body.append(styles);
 };
+
++function(){
+  addEventListener('DOMContentLoaded',function(){
+
+    var elements = document.querySelectorAll('.modal__trigger');
+
+    for (var i = 0; i < elements.length; i++) {
+      new Modal({
+        element:elements[i].getAttribute('href'),
+        hash:elements[i].getAttribute('href')
+      });
+    }
+  });
+}();
