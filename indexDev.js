@@ -18,6 +18,7 @@ Modal.prototype.open = function(options){
   if (this.closing || this.opening) return Promise.reject();
   if (this.__opened) return Promise.reject();
   this.opening = true;
+  this.__dinamic && this.element(this.__query);
   if (!this.__el) {
     this.opening = null;
   	throw (new Error("Не задан элемент ~ element:'.asd' || element:document.querySelector('.asd') ~ "));
@@ -162,9 +163,12 @@ Modal.prototype.element = function(element) {
 
   if (typeof element == 'string') {
     this.__el = document.querySelector(element)
+  } else if ('' + element == '[object HTMLCollection]') {
+    this.__el = element[0];
   } else if (element instanceof Object) {
     this.__el = element;
   }
+  this.__query = element;
   if (!element) throw (new Error("Не задан элемент ~ element:'.asd' || element:document.querySelector('.asd') ~ " , this.__el));
 
 }
@@ -280,6 +284,9 @@ Modal.prototype.__parseOptions = function(options){
 
   if (options.bgStyle)
     this.__bgStyle = options.bgStyle;
+
+  if ( options.dinamic !== undefined )
+    this.__dinamic = options.dinamic;
 
 }
 

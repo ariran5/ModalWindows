@@ -170,8 +170,50 @@ options = {
   bgStyle: {
     'height' : '20px',
     'background' : 'red'
-  }
+  },
   ...
 }
 ```
 Важно помнить что свойство и значение должны быть строками 'max-width': '120px'
+
+7) Если нужно что-бы открывались разные попапы, то можно использовать опцию
+```
+options = {
+  ...
+  dinamic:true,
+  ...
+}
+```
+тогда если мы передаем как элеменет CSS селектор `#asd .modal.active`, то перед каждым открытием скрипт будет искать новый попап с нужным CSS селектором.
+Если мы не хотим передавать CSS селектор то можно передать HTML коллекцию `HTMLCollection`, ни в коем случае не лист узлов `NodeList`, например:
+```
+// ПРАВИЛЬНО
+options = {
+  ...
+  element:'#asd .modal.active'
+  dinamic:true,
+  ...
+}
+
+options = {
+  ...
+  element: document.querySelector('#asd').getElementsByClassName('active');
+  dinamic:true,
+  ...
+}
+
+//НЕ ПРАВИЛЬНО
+options = {
+  ...
+  element:document.querySelector('#asd .modal.active') || document.querySelectorAll('#asd .modal.active'),
+  dinamic:true,
+  ...
+}
+options = {
+  ...
+  // Не подходит, так как мы передаем элемент а не коллекцию
+  element: document.querySelector('#asd').getElementsByClassName('active')[0];
+  dinamic:true,
+  ...
+}
+```

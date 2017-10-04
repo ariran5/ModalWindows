@@ -31,30 +31,61 @@
     </div>
   </div>
 
+  <div id="sss">
+
+    <div class="modal active">
+      <div class="modal__footer">
+        <button class="modal__close">
+          Закрыть
+        </button>
+      </div>
+      <div class="modal__content">
+        Контент попапчика №14
+      </div>
+    </div>
+
+    <div class="modal aas">
+      <div class="modal__footer">
+        <button class="modal__close">
+          Закрыть
+        </button>
+      </div>
+      <div class="modal__content">
+        Контент попапчика №18
+      </div>
+    </div>
+
+  </div>
+
+  <a href="#sss">хэш попап</a>
+
 
   <script type="text/javascript" src="indexDev.js"></script>
   <script type="text/javascript">
   document.addEventListener('DOMContentLoaded', function(){
 
-    // var modal = new Modal({
-    //   element:'#qqq',
-    //   hash: '#qwe',
-    //   open: function(){
-    //     console.log('open');
-    //   },
-    //   close: function(){
-    //     console.log('close');
-    //   },
-    //   BGclose: function(){
-    //     console.log('BGclose');
-    //   },
-    //   afterOpen: function(){
-    //     console.log('afterOpen');
-    //   },
-    //   afterClose: function(){
-    //     console.log('afterClose');
-    //   },
-    // });
+    var modal = new Modal({
+      element:document.querySelector('#sss').getElementsByClassName('active'),
+      hash: '#sss',
+      dinamic: true,
+      open: function(){
+        console.log('open');
+      },
+      close: function(){
+        console.log('close');
+        document.querySelector('.modal.active').classList.remove('active');
+        document.querySelector('.modal.aas').classList.add('active');
+      },
+      BGclose: function(){
+        console.log('BGclose');
+      },
+      afterOpen: function(){
+        console.log('afterOpen');
+      },
+      afterClose: function(){
+        console.log('afterClose');
+      },
+    });
 
     let a = new Modal({
       element:'#asd',
