@@ -52,23 +52,60 @@ Modal.prototype.open = function (options) {
 };
 
 Modal.prototype.close = function (options) {
-  if (this.closing || this.opening) return Promise.reject();
+  var _this = this;
+  options && this.__parseOptions(options);
+
+  if (this.closing || this.opening) {
+
+    return new Promise(function (resolve, reject) {
+
+      if (_this.timeout) clearTimeout(_this.timeout);
+
+      _this.timeout = setTimeout(function () {
+        resolve();
+        _this.__el.removeEventListener('transitionend', transitionEndF);
+        console.warn('Авайрийное закрытие попапа. Не правильно сработал скрипт закрытия. Необходимо разобраться.', new Error().stack);
+        _this.__bg.remove();
+        _this.__el.style.display = '';
+        _this.__el.style.opacity = '';
+        _this.__opened = false;
+        _this.opening = null;
+        _this.closing = null;
+      }, 3000);
+
+      function transitionEndF() {
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+
+            _this.close().then(function () {
+              resolve();
+              clearTimeout(_this.timeout);
+            }, function () {
+              console.log(123123);
+            });
+          });
+        });
+        _this.__el.removeEventListener('transitionend', transitionEndF);
+      }
+
+      _this.__el.addEventListener('transitionend', transitionEndF);
+    });
+  }
+
   if (!this.__opened) return Promise.reject();
   this.closing = true;
-  options && this.__parseOptions(options);
   this.__closeCallback && this.__closeCallback();
   this.__bg.classList.remove('modal--open');
   this.__bg.addEventListener('transitionend', function () {
     _this.__bg.remove();
   });
-  var _this = this;
   return this.__hideElement().then(function () {
     document.body.style.width = '';
     document.body.style.overflow = '';
     _this.__el.removeEventListener('click', _this.__buttonsListener);
     if (_this.hash && _this.hash == location.hash) {
       history.replaceState({}, document.title, location.pathname.replace(/#/, ''));
-      window.dispatchEvent(new Event('hashchange'));
+      // window.dispatchEvent(new Event('hashchange'));
     }
     _this.__opened = false;
     _this.closing = null;
@@ -177,7 +214,7 @@ Modal.prototype.__setBg = function () {
   this.__bg.addEventListener('click', function (e) {
     _this.close.call(_this).then(function () {
       _this.__BGcloseCallback && _this.__BGcloseCallback();
-    });
+    }, function () {});
   }, false);
 
   this.__el.insertAdjacentElement('beforebegin', this.__bg);
@@ -194,6 +231,7 @@ Modal.prototype.__showElement = function () {
       _this.__el.style.opacity = '1';
     });
   });
+
   return new Promise(function (resolve, reject) {
 
     var a = function a(e) {
@@ -216,7 +254,6 @@ Modal.prototype.__hideElement = function () {
       resolve();
       _this.__el.removeEventListener('transitionend', hide);
       _this.__el.style.display = '';
-      _this.__el.style.transform = '';
       _this.__el.style.opacity = '';
     }
     _this.__el.addEventListener('transitionend', hide, false);
@@ -243,7 +280,11 @@ Modal.prototype.__parseOptions = function (options) {
 
   if (options.hash !== undefined) {
 
-    this.hash = options.hash;
+    if (options.hash === true) {
+      if (typeof this.__query == 'string' && /#/.test(this.__query)) this.hash = this.__query;
+    } else {
+      this.hash = options.hash;
+    }
     if (!this.__hashListenerBinded) {
       this.__hashListenerBinded = this.__hashListener.bind(this);
       window.addEventListener("hashchange", this.__hashListenerBinded);
@@ -269,7 +310,7 @@ Modal.prototype.__hashListener = function (options) {
 Modal.prototype.__styles = function () {
   window.AfmJdnJREQjos__modalStyles = true;
   var styles = document.createElement('style');
-  styles.innerHTML = '\n  .modal--bg {\n    position: fixed;\n    will-change: opacity;\n    width: 100%;\n    height: 100%;\n    top: 0;\n    left: 0;\n    background-color: rgba(255,255,255,.6);\n    opacity: 0;\n    transition: all .2s ease .1s;\n    -webkit-backdrop-filter: blur(20px);\n    backdrop-filter: blur(20px);\n  }\n  .modal--bg.modal--open {\n    opacity: 1;\n    top:0;\n    transition: all .3s ease .1s;\n  }\n  .modal {\n    color:#333;\n    position: fixed;\n    top: 47%;\n    left: 0%;\n    right: 0%;\n    will-change: transform, opacity;\n    display: none;\n    opacity: 0;\n    width: 55%;\n    min-height: 177px;\n    max-width: 1000px;\n    max-height: 90%;\n    height:auto;\n    padding: 0;\n    transform: translate(0 , -45%) scale(.9, 1);\n    margin: 0 auto;\n    transition: all .3s ease;\n    border-radius: 6px;\n    box-sizing: border-box ;\n    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.15);\n    box-shadow: 0 16px 28px 0 rgba(0, 0, 0, 0.22), 0 25px 55px 0 rgba(0, 0, 0, 0.21);\n    overflow: hidden;\n    flex-direction:column;\n  }\n  .modal__content {\n    min-height: 120px;\n    max-height:400px;\n    max-height: 90vh;\n    margin: 0;\n    overflow-y: auto;\n    padding: 30px;\n    box-sizing: border-box;\n    order:1;\n  }\n  .modal__footer {\n    order:2;\n    display: flex;\n    margin: 0 10px;\n    padding:0 6px;\n    height: 56px;\n    min-height: 56px;\n    margin-top:-56px;\n    align-items: center;\n    justify-content: space-between;\n    border-top: 1px solid #e0e0e0;\n  }\n  .modal__footer .btn {\n    font-size: .85rem;\n  }\n  .modal__footer ~ .modal__content {\n    max-height: calc(90vh - 56px);\n    margin-bottom: 56px;\n  }\n\n  @media (max-width:1000px) {\n    .modal {\n      width: 65%;\n      max-width: 1000px;\n    }\n  }\n  @media (max-width:800px) {\n    .modal {\n      width: 65%;\n      max-width: 1000px;\n    }\n  }\n  @media (max-width:600px) {\n    .modal {\n      width: 75%;\n      max-width: 1000px;\n    }\n  }\n  @media (max-width:480px) {\n    .modal {\n      width: 85%;\n      max-width: 1000px;\n    }\n  }\n  @media (max-width:320px) {\n    .modal {\n      width: 95%;\n    }\n  }\n  ';
+  styles.innerHTML = '\n  .modal--bg {\n    position: fixed;\n    will-change: opacity;\n    width: 100%;\n    height: 100%;\n    top: 0;\n    left: 0;\n    background-color: rgba(255,255,255,.9);\n    opacity: 0;\n    transition: all .2s ease .1s;\n  }\n\n  @supports (-webkit-backdrop-filter: blur(20px)) or (backdrop-filter: blur(20px)) {\n    .modal--bg {\n      -webkit-backdrop-filter: blur(20px);\n      backdrop-filter: blur(20px);\n      background-color: rgba(255,255,255,.6);\n    }\n  }\n  .modal--bg.modal--open {\n    opacity: 1;\n    top:0;\n    transition: all .3s ease .1s;\n  }\n  .modal {\n    color:#333;\n    position: fixed;\n    top: 47%;\n    left: 0%;\n    right: 0%;\n    will-change: transform, opacity;\n    display: none;\n    opacity: 0;\n    width: 55%;\n    min-height: 177px;\n    max-width: 1000px;\n    max-height: 90%;\n    height:auto;\n    padding: 0;\n    transform: translate(0 , -45%) scale(.9, 1);\n    margin: 0 auto;\n    transition: all .3s ease;\n    border-radius: 6px;\n    box-sizing: border-box ;\n    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.15);\n    box-shadow: 0 16px 28px 0 rgba(0, 0, 0, 0.22), 0 25px 55px 0 rgba(0, 0, 0, 0.21);\n    overflow: hidden;\n    flex-direction:column;\n  }\n  .modal__content {\n    min-height: 120px;\n    max-height:400px;\n    max-height: 90vh;\n    margin: 0;\n    overflow-y: auto;\n    padding: 30px;\n    box-sizing: border-box;\n    order:1;\n  }\n  .modal__footer {\n    order:2;\n    display: flex;\n    margin: 0 10px;\n    padding:0 6px;\n    height: 56px;\n    min-height: 56px;\n    margin-top:-56px;\n    align-items: center;\n    justify-content: space-between;\n    border-top: 1px solid #e0e0e0;\n  }\n  .modal__footer .btn {\n    font-size: .85rem;\n  }\n  .modal__footer ~ .modal__content {\n    max-height: calc(90vh - 56px);\n    margin-bottom: 56px;\n  }\n\n  @media (max-width:1000px) {\n    .modal {\n      width: 65%;\n      max-width: 1000px;\n    }\n  }\n  @media (max-width:800px) {\n    .modal {\n      width: 65%;\n      max-width: 1000px;\n    }\n  }\n  @media (max-width:600px) {\n    .modal {\n      width: 75%;\n      max-width: 1000px;\n    }\n  }\n  @media (max-width:480px) {\n    .modal {\n      width: 85%;\n      max-width: 1000px;\n    }\n  }\n  @media (max-width:320px) {\n    .modal {\n      width: 95%;\n    }\n  }\n  ';
   document.body.append(styles);
 };
 
@@ -280,10 +321,12 @@ Modal.prototype.__styles = function () {
 
     for (var i = 0; i < elements.length; i++) {
       var href = elements[i].getAttribute('href');
-      new Modal({
+      var options = {
         element: href,
         hash: href
-      });
+      };
+      if (elements[i].classList.contains('modal__dinamic')) options.dinamic = true;
+      new Modal(options);
     }
   });
 }();

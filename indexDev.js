@@ -55,16 +55,55 @@ Modal.prototype.open = function(options){
 }
 
 Modal.prototype.close = function(options){
-  if (this.closing || this.opening) return Promise.reject();
+  var _this = this;
+  options && this.__parseOptions(options);
+
+  if (this.closing || this.opening) {
+
+    return new Promise(function (resolve,reject){
+
+      if (_this.timeout) clearTimeout(_this.timeout);
+
+      _this.timeout = setTimeout( function(){
+          resolve();
+          _this.__el.removeEventListener('transitionend',transitionEndF);
+          console.warn('Авайрийное закрытие попапа. Не правильно сработал скрипт закрытия. Необходимо разобраться.',new Error().stack);
+          _this.__bg.remove();
+          _this.__el.style.display = '';
+          _this.__el.style.opacity = '';
+          _this.__opened = false;
+          _this.opening = null;
+          _this.closing = null;
+
+      },3000);
+
+      function transitionEndF(){
+        requestAnimationFrame(function(){
+          requestAnimationFrame(function(){
+
+            _this.close().then(function(){
+              resolve();
+              clearTimeout(_this.timeout);
+            },function(){
+              console.log(123123);
+            });
+          });
+        });
+        _this.__el.removeEventListener('transitionend', transitionEndF);
+      }
+
+      _this.__el.addEventListener('transitionend', transitionEndF);
+
+    });
+  }
+
   if (!this.__opened) return Promise.reject();
 	this.closing = true;
-  options && this.__parseOptions(options);
   this.__closeCallback && this.__closeCallback();
   this.__bg.classList.remove('modal--open');
   this.__bg.addEventListener('transitionend',()=>{
     _this.__bg.remove();
   });
-  var _this = this;
   return this.__hideElement()
 
   .then(function(){
@@ -73,7 +112,7 @@ Modal.prototype.close = function(options){
     _this.__el.removeEventListener('click',_this.__buttonsListener);
     if (_this.hash && _this.hash == location.hash){
       history.replaceState({},document.title ,location.pathname.replace(/#/,''));
-      window.dispatchEvent(new Event('hashchange'));
+      // window.dispatchEvent(new Event('hashchange'));
     }
     _this.__opened = false;
     _this.closing = null;
@@ -195,7 +234,7 @@ Modal.prototype.__setBg = function() {
     _this.close.call(_this)
     .then(function(){
       _this.__BGcloseCallback && _this.__BGcloseCallback();
-    });
+    },function(){});
   },false);
 
   this.__el.insertAdjacentElement('beforebegin',this.__bg);
@@ -212,6 +251,7 @@ Modal.prototype.__showElement = function(){
       _this.__el.style.opacity =  '1';
     });
   });
+
   return new Promise(function(resolve,reject){
 
     var a = function(e){
@@ -238,7 +278,6 @@ Modal.prototype.__hideElement = function(){
       resolve();
       _this.__el.removeEventListener('transitionend', hide);
       _this.__el.style.display = '';
-      _this.__el.style.transform = '';
       _this.__el.style.opacity =  '';
 
     }
@@ -272,7 +311,12 @@ Modal.prototype.__parseOptions = function(options){
 
   if ( options.hash !== undefined ) {
 
-    this.hash = options.hash;
+    if (options.hash === true) {
+      if (typeof this.__query == 'string' && /#/.test(this.__query))
+        this.hash = this.__query;
+    } else {
+      this.hash = options.hash;
+    }
     if (!this.__hashListenerBinded) {
       this.__hashListenerBinded = this.__hashListener.bind(this);
       window.addEventListener("hashchange", this.__hashListenerBinded)
@@ -312,11 +356,17 @@ Modal.prototype.__styles = function(){
     height: 100%;
     top: 0;
     left: 0;
-    background-color: rgba(255,255,255,.6);
+    background-color: rgba(255,255,255,.9);
     opacity: 0;
     transition: all .2s ease .1s;
-    -webkit-backdrop-filter: blur(20px);
-    backdrop-filter: blur(20px);
+  }
+
+  @supports (-webkit-backdrop-filter: blur(20px)) or (backdrop-filter: blur(20px)) {
+    .modal--bg {
+      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(20px);
+      background-color: rgba(255,255,255,.6);
+    }
   }
   .modal--bg.modal--open {
     opacity: 1;
@@ -418,10 +468,13 @@ Modal.prototype.__styles = function(){
 
     for (var i = 0; i < elements.length; i++) {
       var href = elements[i].getAttribute('href');
-      new Modal({
+      var options = {
         element: href,
         hash: href
-      });
+      };
+      if (elements[i].classList.contains('modal__dinamic'))
+        options.dinamic = true;
+      new Modal(options);
     }
   });
 }();

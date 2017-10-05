@@ -31,9 +31,8 @@
     </div>
   </div>
 
-  <div id="sss">
 
-    <div class="modal active">
+    <div id="sss" class="modal active">
       <div class="modal__footer">
         <button class="modal__close">
           Закрыть
@@ -55,7 +54,6 @@
       </div>
     </div>
 
-  </div>
 
   <a href="#sss">хэш попап</a>
 
@@ -65,7 +63,7 @@
   document.addEventListener('DOMContentLoaded', function(){
 
     var modal = new Modal({
-      element:document.querySelector('#sss').getElementsByClassName('active'),
+      element:'#sss',
       hash: '#sss',
       dinamic: true,
       open: function(){
@@ -73,8 +71,8 @@
       },
       close: function(){
         console.log('close');
-        document.querySelector('.modal.active').classList.remove('active');
-        document.querySelector('.modal.aas').classList.add('active');
+        document.querySelector('#sss').id = '';
+        document.querySelector('.modal.aas').id = 'sss';
       },
       BGclose: function(){
         console.log('BGclose');
@@ -93,7 +91,18 @@
         'top':'50%',
         'max-height':'30vh'
       }
-    }).open();
+    });
+    a.open().then(function(){
+      console.log(1111112);
+    });
+    a.close().then(function(){
+      console.log(1111113);
+    });;
+    a.close().then(function(){
+      console.log(1111114);
+    },()=>{
+      console.log(1111222);
+    });
   });
 
 
